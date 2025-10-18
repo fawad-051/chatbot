@@ -368,7 +368,7 @@ with st.sidebar:
         "Explain quantum computing simply",
         "Write a Python function for Fibonacci",
         "Suggest healthy breakfast ideas",
-        "Plan a 3-day trip to Mumbai"
+        "Plan a 3-day trip to Karachi"
     ]
     
     for prompt in quick_prompts:
@@ -544,4 +544,5 @@ if st.session_state.uploaded_file_name:
 
 # Add signature in main footer as well
 st.markdown('<div class="footer-signature">Prepared by: Dr Fawad Hussain Paul</div>', unsafe_allow_html=True)
+
 
