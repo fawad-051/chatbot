@@ -1,7 +1,9 @@
-langchain
-python-dotenv
-ipykernel
-pandas
+streamlit
 groq
+python-dotenv
 PyPDF2
+python-docx
+pandas
+
+
 
