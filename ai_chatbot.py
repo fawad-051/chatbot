@@ -417,7 +417,7 @@ with col1:
         prompt = st.session_state.quick_prompt
         del st.session_state.quick_prompt
     else:
-        prompt = st.chat_input("Apna message yahan type karein...", key="chat_input")
+        prompt = st.chat_input("Please Type Your Message Here...", key="chat_input")
     
     # display messages with enhanced UI
     chat_placeholder = st.empty()
@@ -544,3 +544,4 @@ if st.session_state.uploaded_file_name:
 
 # Add signature in main footer as well
 st.markdown('<div class="footer-signature">Prepared by: Dr Fawad Hussain Paul</div>', unsafe_allow_html=True)
+
