@@ -544,5 +544,3 @@ if st.session_state.uploaded_file_name:
 
 # Add signature in main footer as well
 st.markdown('<div class="footer-signature">Prepared by: Dr Fawad Hussain Paul</div>', unsafe_allow_html=True)
-
-
