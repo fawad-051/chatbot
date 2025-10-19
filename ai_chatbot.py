@@ -481,7 +481,7 @@ with col1:
                 response_placeholder.markdown(f'<div class="assistant-message">🤖 {full_response}</div>', unsafe_allow_html=True)
                 
             except Exception as e:
-                st.error("❌ API se connect nahi ho paaya. Internet connection check karein.")
+                st.error("❌ Please Connect with API")
         
         # assistant ka response session state mein save karein
         if full_response:
@@ -544,3 +544,4 @@ if st.session_state.uploaded_file_name:
 
 # Add signature in main footer as well
 st.markdown('<div class="footer-signature">Prepared by: Dr Fawad Hussain Paul</div>', unsafe_allow_html=True)
+
