@@ -11,7 +11,7 @@ import PyPDF2
 import docx
 import pandas as pd
 
-# .env file se API key load karein
+# .env file se API key load karein (local development ke liye)
 load_dotenv()
 
 # page ki settings
@@ -22,191 +22,60 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# custom CSS for enhanced UI
-st.markdown("""
-<style>
-    .main-header {
-        font-size: 3.5rem;
-        background: linear-gradient(90deg, #FF6B6B, #4ECDC4, #45B7D1);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        text-align: center;
-        margin-bottom: 1rem;
-        font-weight: 800;
-    }
-    
-    .sub-header {
-        text-align: center;
-        color: #666;
-        margin-bottom: 2rem;
-        font-size: 1.2rem;
-    }
-    
-    .chat-container {
-        background: #f8f9fa;
-        border-radius: 15px;
-        padding: 20px;
-        margin-bottom: 20px;
-        border-left: 5px solid #4ECDC4;
-    }
-    
-    .user-message {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 12px 18px;
-        border-radius: 18px 18px 5px 18px;
-        margin: 10px 0;
-        max-width: 80%;
-        margin-left: auto;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
-    
-    .assistant-message {
-        background: white;
-        color: #333;
-        padding: 12px 18px;
-        border-radius: 18px 18px 18px 5px;
-        margin: 10px 0;
-        max-width: 80%;
-        border: 1px solid #e1e5e9;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
-    
-    .message-time {
-        font-size: 0.7rem;
-        color: #888;
-        text-align: right;
-        margin-top: 5px;
-    }
-    
-    .stats-card {
-        background: white;
-        padding: 15px;
-        border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        text-align: center;
-        border-top: 4px solid #4ECDC4;
-    }
-    
-    .feature-card {
-        background: white;
-        padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0 6px 15px rgba(0,0,0,0.08);
-        text-align: center;
-        transition: transform 0.3s ease;
-    }
-    
-    .feature-card:hover {
-        transform: translateY(-5px);
-    }
-    
-    .stButton button {
-        width: 100%;
-        border-radius: 10px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        font-weight: 600;
-        border: none;
-        padding: 10px 20px;
-        transition: all 0.3s ease;
-    }
-    
-    .stButton button:hover {
-        transform: scale(1.02);
-        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-    }
-    
-    .sidebar-content {
-        background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
-        padding: 20px;
-        border-radius: 15px;
-    }
-    
-    .footer-signature {
-        text-align: center;
-        font-size: 0.9rem;
-        color: #666;
-        margin-top: 10px;
-        font-style: italic;
-    }
-    
-    .file-info-card {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 15px;
-        border-radius: 10px;
-        margin: 10px 0;
-        text-align: center;
-    }
-    
-    .clear-chat-btn {
-        background: linear-gradient(135deg, #FF6B6B 0%, #EE5A24 100%) !important;
-    }
-</style>
-""", unsafe_allow_html=True)
-
-# File reading functions
-def read_pdf(file):
-    """PDF file read karein"""
+# API key get karne ka improved method
+def get_api_key():
+    # Pehle Streamlit secrets check karein
     try:
-        pdf_reader = PyPDF2.PdfReader(file)
-        text = ""
-        for page in pdf_reader.pages:
-            text += page.extract_text()
-        return text
-    except Exception as e:
-        return f"PDF read karne mein error: {str(e)}"
-
-def read_txt(file):
-    """Text file read karein"""
-    try:
-        return file.read().decode("utf-8")
-    except Exception as e:
-        return f"Text file read karne mein error: {str(e)}"
-
-def read_docx(file):
-    """Word document read karein"""
-    try:
-        doc = docx.Document(file)
-        text = ""
-        for paragraph in doc.paragraphs:
-            text += paragraph.text + "\n"
-        return text
-    except Exception as e:
-        return f"Word document read karne mein error: {str(e)}"
-
-def read_csv(file):
-    """CSV file read karein"""
-    try:
-        df = pd.read_csv(file)
-        return f"CSV file ka summary:\n{df.head().to_string()}\n\nColumns: {list(df.columns)}"
-    except Exception as e:
-        return f"CSV file read karne mein error: {str(e)}"
-
-def process_uploaded_file(uploaded_file):
-    """Uploaded file ko process karein"""
-    file_type = uploaded_file.type
-    file_name = uploaded_file.name
+        if hasattr(st, 'secrets') and 'GROQ_API_KEY' in st.secrets:
+            return st.secrets['GROQ_API_KEY']
+    except:
+        pass
     
-    if file_type == "application/pdf":
-        return read_pdf(uploaded_file), file_name
-    elif file_type == "text/plain":
-        return read_txt(uploaded_file), file_name
-    elif file_type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-        return read_docx(uploaded_file), file_name
-    elif file_type == "text/csv" or file_name.endswith('.csv'):
-        return read_csv(uploaded_file), file_name
-    else:
-        return f"File type '{file_type}' currently support nahi hai.", file_name
+    # Phir environment variable check karein
+    api_key = os.getenv("GROQ_API_KEY")
+    if api_key:
+        return api_key
+    
+    # Agar kahi se bhi nahi mili toh
+    return None
 
-# directly .env se API key lein
-api_key = os.getenv("GROQ_API_KEY")
+# API key get karein
+api_key = get_api_key()
 
-# agar API key nahi hai toh error
+# agar API key nahi hai toh error with guidance
 if not api_key:
-    st.error("❌ API Key .env file mein nahi mili! Pehle .env file setup karein.")
+    st.error("""
+    ❌ API Key nahi mili!
+    
+    **Solution Steps:**
+    
+    1. **Groq API Key Banayein:**
+       - https://console.groq.com par jayein
+       - Sign up/Login karein
+       - API key generate karein
+    
+    2. **Deployment Settings:**
+       - Streamlit app ke settings mein jayein
+       - "Secrets" section mein yeh add karein:
+         ```
+         GROQ_API_KEY = "apna_actual_api_key_yahan_dalein"
+         ```
+    
+    3. **Local Testing:**
+       - Project folder mein `.env` file banayein
+       - Usmein `GROQ_API_KEY=apna_actual_api_key` add karein
+    """)
+    
+    # Additional help links
+    st.markdown("""
+    **Helpful Links:**
+    - [Groq API Console](https://console.groq.com)
+    - [Streamlit Secrets Documentation](https://docs.streamlit.io/deploy/streamlit-community-cloud/deploy-your-app/secrets-management)
+    """)
+    
     st.stop()
+
+# ... (baaki ka code waisa hi rahega)
 
 # session state initialize karein
 if "messages" not in st.session_state:
@@ -544,4 +413,5 @@ if st.session_state.uploaded_file_name:
 
 # Add signature in main footer as well
 st.markdown('<div class="footer-signature">Prepared by: Dr Fawad Hussain Paul</div>', unsafe_allow_html=True)
+
 
